@@ -1,28 +1,13 @@
 <html>
+
 <head>
-    <title>Bitboard Game</title>
+  <title>Bitboard Game</title>
 </head>
+
 <body>
-    <h1>Bitboard Game State</h1>
-    <script src="bitboard.js"></script>
-    <script>
-        // Load the WebAssembly module
-        BitboardModule().then(Module => {
-            // Once the module is loaded, you can use the C functions
-
-            // Initialize the bitboard
-            Module._setPiece(3);
-            console.log("Bitboard after setting position 3:", Module._getBitboard());
-
-            // Check if there's a piece at position 3
-            const isPiece = Module._isPieceAt(3);
-            console.log("Is there a piece at position 3?", isPiece ? "Yes" : "No");
-
-            // Clear the piece at position 3
-            Module._clearPiece(3);
-            console.log("Bitboard after clearing position 3:", Module._getBitboard());
-        });
-    </script>
+  <h1>Bitboard Game State</h1>
+  <script src="bitboard.js"></script>
+  <script src="functions.js"></script>
 </body>
-</html>
 
+</html>

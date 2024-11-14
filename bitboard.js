@@ -28,7 +28,7 @@ var readyPromise = new Promise((resolve, reject) => {
   readyPromiseResolve = resolve;
   readyPromiseReject = reject;
 });
-["_setPiece","_isPieceAt","_clearPiece","_getBitboard","_memory","___indirect_function_table","onRuntimeInitialized"].forEach((prop) => {
+["_setWhitePiece","_isWhitePieceAt","_clearWhitePiece","_getWhiteBitboard","_printWhiteBitboard","_setBlackPiece","_isBlackPieceAt","_clearBlackPiece","_getBlackBitboard","_printBlackBitboard","_memory","___indirect_function_table","onRuntimeInitialized"].forEach((prop) => {
   if (!Object.getOwnPropertyDescriptor(readyPromise, prop)) {
     Object.defineProperty(readyPromise, prop, {
       get: () => abort('You are getting ' + prop + ' on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js'),
@@ -994,6 +994,8 @@ function dbg(...args) {
       }
     };
 
+  var __emscripten_memcpy_js = (dest, src, num) => HEAPU8.copyWithin(dest, src, src + num);
+
   var printCharBuffers = [null,[],[]];
   
   var UTF8Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder() : undefined;
@@ -1115,14 +1117,22 @@ function checkIncomingModuleAPI() {
 }
 var wasmImports = {
   /** @export */
+  _emscripten_memcpy_js: __emscripten_memcpy_js,
+  /** @export */
   fd_write: _fd_write
 };
 var wasmExports = createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
-var _getBitboard = Module['_getBitboard'] = createExportWrapper('getBitboard', 0);
-var _setPiece = Module['_setPiece'] = createExportWrapper('setPiece', 1);
-var _isPieceAt = Module['_isPieceAt'] = createExportWrapper('isPieceAt', 1);
-var _clearPiece = Module['_clearPiece'] = createExportWrapper('clearPiece', 1);
+var _getWhiteBitboard = Module['_getWhiteBitboard'] = createExportWrapper('getWhiteBitboard', 0);
+var _getBlackBitboard = Module['_getBlackBitboard'] = createExportWrapper('getBlackBitboard', 0);
+var _setWhitePiece = Module['_setWhitePiece'] = createExportWrapper('setWhitePiece', 1);
+var _setBlackPiece = Module['_setBlackPiece'] = createExportWrapper('setBlackPiece', 1);
+var _isWhitePieceAt = Module['_isWhitePieceAt'] = createExportWrapper('isWhitePieceAt', 1);
+var _isBlackPieceAt = Module['_isBlackPieceAt'] = createExportWrapper('isBlackPieceAt', 1);
+var _clearWhitePiece = Module['_clearWhitePiece'] = createExportWrapper('clearWhitePiece', 1);
+var _clearBlackPiece = Module['_clearBlackPiece'] = createExportWrapper('clearBlackPiece', 1);
+var _printWhiteBitboard = Module['_printWhiteBitboard'] = createExportWrapper('printWhiteBitboard', 0);
+var _printBlackBitboard = Module['_printBlackBitboard'] = createExportWrapper('printBlackBitboard', 0);
 var _fflush = createExportWrapper('fflush', 1);
 var _strerror = createExportWrapper('strerror', 1);
 var _emscripten_stack_init = () => (_emscripten_stack_init = wasmExports['emscripten_stack_init'])();
