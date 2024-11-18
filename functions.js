@@ -1,3 +1,5 @@
+import anime from "animejs/lib/anime.es.js";
+
 // Load the WebAssembly module
 BitboardModule().then((Module) => {
   // Once the module is loaded, you can use the C functions
@@ -17,4 +19,12 @@ BitboardModule().then((Module) => {
   console.log("Bitboard after setting position 3:", Module._getBlackBitboard());
   Module._printWhiteBitboard();
   Module._printBlackBitboard();
+});
+
+anime({
+  targets: "div",
+  translateX: 250,
+  rotate: "1turn",
+  backgroundColor: "#FFF",
+  duration: 800,
 });
