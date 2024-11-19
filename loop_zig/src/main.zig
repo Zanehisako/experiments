@@ -5,7 +5,7 @@ const posix = std.posix;
 pub fn main() !void {
     const address = try std.net.Address.parseIp("127.0.0.1", 5882);
 
-    std.debug.print("Started the server at address :127.0.0.1 port 5882", .{});
+    std.debug.print("Started the server at address :127.0.0.1 port 5882\n", .{});
     const tpe: u32 = posix.SOCK.STREAM;
     const protocol = posix.IPPROTO.TCP;
     const listener = try posix.socket(address.any.family, tpe, protocol);
@@ -30,16 +30,34 @@ pub fn main() !void {
         std.debug.print("{} connected\n", .{client_address});
 
         const timeout = posix.timeval{ .tv_sec = 2, .tv_usec = 500_000 };
-        try posix.setsockopt(socket, posix.SOL.SOCKET, posix.SO.RCVTIMEO, &std.mem.toBytes(timeout));
-        try posix.setsockopt(socket, posix.SOL.SOCKET, posix.SO.SNDTIMEO, &std.mem.toBytes(timeout));
+        posix.setsockopt(socket, posix.SOL.SOCKET, posix.SO.RCVTIMEO, &std.mem.toBytes(timeout)) catch |err| {
+            std.debug.print("error:{any} occured when setting the socket options\n", .{err});
+        };
+        posix.setsockopt(socket, posix.SOL.SOCKET, posix.SO.SNDTIMEO, &std.mem.toBytes(timeout)) catch |err| {
+            std.debug.print("error:{any} occured when setting the socket options\n", .{err});
+        };
 
         // we've changed everything from this point on
         const stream = std.net.Stream{ .handle = socket };
 
-        const read = try stream.read(&buf);
-        if (read == 0) {
-            continue;
+        var read: usize = undefined;
+        while (true) {
+            read = stream.read(&buf) catch |err| {
+                if (err == error.WouldBlock) {
+                    std.debug.print("waiting for user input \n", .{});
+                    continue;
+                } else {
+                    std.debug.print("{any} occured when traying to write to the stream\n", .{err});
+                    return err;
+                }
+            };
+            std.debug.print("reading successfully", .{});
+            break;
         }
-        try stream.writeAll(buf[0..read]);
+        const hello = " hello";
+        @memcpy(buf[read - 1 ..], hello);
+        stream.writeAll(&buf) catch |err| {
+            std.debug.print("{any} occured when trying to write to the stream", .{err});
+        };
     }
 }
